@@ -2,7 +2,8 @@ var Model = require('../models'),
     JSONWebToken = require('jsonwebtoken'),
     passport = require('passport'),
     settings = require('../../config/settings');
-    util = require('../helper/util');
+    util = require('../helper/util'),
+    mailer  = require('../helper/mailer');
 
 
 module.exports.create = function(req, res){
@@ -16,7 +17,7 @@ module.exports.create = function(req, res){
               id: user.id
           };
           var token = JSONWebToken.sign(tokenData, settings.privateKey);
-          // Common.sentMailVerificationLink(user,token,req.body.verifyEmailUrl);
+          mailer.sentMailVerificationLink(user,token,req.body.verifyEmailUrl);
           res.status(201).json({ token : token});
       }else{
           var error = {};
