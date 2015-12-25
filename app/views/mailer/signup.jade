@@ -1,0 +1,9 @@
+html
+  head
+    meta(http-equiv = 'Content-Type', content = 'text/html; charset=UTF-8')
+    title= subject
+    body
+      h4.h4 Hi #{user.firstname} #{user.lastname},
+      p Thank you for registering on Findoo.
+      p Please verify your email by clicking on the verification link below
+      a(class='button', href=verifyEmailUrl) Verification Link
