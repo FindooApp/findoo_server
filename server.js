@@ -12,7 +12,7 @@ var express = require('express'),
     Model = require('./app/models'),
     opts = {};
   
-    opts.secretOrKey = 'secret';
+    opts.secretOrKey = settings.privateKey;
     opts.authScheme = true;
 
 
@@ -36,13 +36,6 @@ var express = require('express'),
 	app.set('views', __dirname + '/app/views');
 	app.set('view engine', 'jade');
 
-// passport.serializeUser(function(user, done) {
-//   done(null, user);
-// });
-
-// passport.deserializeUser(function(user, done) {
-//   done(null, user);
-// })
 
 passport.use(new LocalStrategy({
     usernameField: 'email',
@@ -62,24 +55,23 @@ passport.use(new LocalStrategy({
   }
 ));
 
-  passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
-    Model.User.findOne({email: jwt_payload.sub}, function(err, user) {
-        if (err) {
-            return done(err, false);
-        }
-        if (user) {
-            done(null, user);
-        } else {
-            done(null, false);
-            // or you could create a new account
-        }
-    });
-  }));
+passport.use(new JwtStrategy(opts, function(jwt_payload, done) {
+  Model.User.findOne({email: jwt_payload.sub}, function(err, user) {
+      if (err) {
+          return done(err, false);
+      }
+      if (user) {
+          done(null, user);
+      } else {
+          done(null, false);
+          // or you could create a new account
+      }
+  });
+}));
 
-	
 
-	var server = app.listen(port, function(){
-		var host = server.address().address;
-  	var port = server.address().port;
-  	console.log('Example app listening at http://%s:%s', host, port);
-	});
+var server = app.listen(port, function(){
+	var host = server.address().address;
+	var port = server.address().port;
+	console.log('Findoo Server listening at http://%s:%s', host, port);
+});
