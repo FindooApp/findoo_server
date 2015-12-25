@@ -2,9 +2,9 @@
 var express = require('express'),
     app = express(),
     mailer = require('express-mailer'),
-    settings = require('../../config/settings'),
+    settings = require('../../config/settings');
 
-    app.set('views', __dirname + '/../view');
+    app.set('views', __dirname + '/../views');
     app.set('view engine', 'jade');
 
 // create reusable transport method (opens pool of SMTP connections)
@@ -22,7 +22,7 @@ mailer.extend(app, {
 
 exports.sentMailVerificationLink = function(user, token, url) {
     console.log("token",token);
-     app.mailer.send('../view/mailer/signup', {
+     app.mailer.send('../views/mailer/signup', {
         to: user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field. 
         subject: "Welcome to Findoo", // REQUIRED.
         user : user,

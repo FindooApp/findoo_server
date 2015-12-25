@@ -35,18 +35,55 @@ module.exports.create = function(req, res){
 
 
 module.exports.verifyEmail = function(req, res){
-  
+   JSONWebToken.verify(req.body.token, settings.privateKey, function(err, decoded) {
+          console.log("in verify","decoded,", decoded)
+            if(decoded === undefined) return res.status(403).json({message : "Invalid verification link"});
+            console.log("decoded",decoded)
+            Model.User.findAll({
+              where : {
+                id :decoded.id,
+                email : decoded.email
+              }
+            })
+            .then(function(users){
+              console.log("users",users)
+              if(users.length){
+                users.forEach(function(u){
+                  u.update({isVerified : true});
+                })
+                return res.status(200).json({message :  "Account sucessfully verified"});
+              }else{
+                return res.status(403).json({message : "Invalid verification link"});
+              }
+            })
+            .catch(function(error){
+              return res.status(500).json(error);
+            })
+
+        });
 };
 
 
 module.exports.resendVerificationEmail = function(req, res) {
-  
+  Model.User.findOne({where : {email : req.body.email}})
+        .then(function(user){
+          if(user){
+            if(user.isVerified) return res.status(200).json({message : "Your email address is already verified"});
+            var tokenData = {
+                        email: user.email,
+                        id: user.id
+                    };
+            Common.sentMailVerificationLink(user,JSONWebToken.sign(tokenData, util.privateKey));
+            res.status(200).json({message : "Account verification link is sucessfully sent to your email id"});
+          }else{
+            res.status(401).json({message : "Invalid username or password"})
+          }
+        })
 };
 
 
 module.exports.login = function(req, res, next){
   passport.authenticate('local', { sessions: false }, function(err, user, info){
-    // console.log("inside authenticate",err,user.authenticate(),req)
     if(err){
       res.status(500).json(err);
       return next(err);
@@ -57,10 +94,16 @@ module.exports.login = function(req, res, next){
       return next(info);
     }
 
+    if(user && !user.isVerified){
+      res.status(401).json({message : "User not verified. Please check email"});
+      return next(info);
+    }
+
     //user has authenticated correctly thus we create a JWT token 
     var token = JSONWebToken.sign({
       user: {
-        email: user.email
+        email: user.email,
+        id: user.id
       }
     }, 'secret');
     res.json({ token : token });
@@ -71,10 +114,50 @@ module.exports.login = function(req, res, next){
 
 
 module.exports.forgotPassword = function(req, res){
-    
+    Model.User.findOne({ where : {email : req.body.email}})
+      .then(function(user){
+        if(user){
+           var tokenData = {
+                        email: user.email,
+                        id: user.id
+                    },
+                token = JSONWebToken.sign(tokenData, settings.privateKey);
+          sentMailVerificationLink.sentMailForgotPassword(user,token, req.body.forgotPasswordUrl);
+          res.status(200).json({message : "Instruction to reset password is sent vial email"})
+        }else{
+          res.status(401).json({message : "User with this email doesn't exists in the system"});
+        }
+      })
+      .catch(function(error){
+          console.log("error",error)
+      })
 }
 
 
+
 module.exports.resetPassword = function(req, res){
-   
+   JSONWebToken.verify(req.body.token, settings.privateKey, function(err, decoded) {
+          console.log("in verify","decoded,", decoded)
+            if(decoded === undefined) return res.status(403).json({message : "Invalid Reset Password link"})
+            Model.User.findAll({
+              where : {
+                id :decoded.id,
+                email : decoded.email
+              }
+            })
+            .then(function(users){
+              if(users.length){
+                users.forEach(function(u){
+                  u.update({ password : util.encrypt(req.body.password)});
+                })
+                return res.status(200).json({message :  "Password Reset Successfully"});
+              }else{
+                return res.status(403).json({message : "Invalid Reset Password link"});
+              }
+            })
+            .catch(function(error){
+              return res.status(500).json(error);
+            })
+
+        });
 };
