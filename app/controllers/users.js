@@ -101,16 +101,19 @@ module.exports.login = function(req, res, next){
 
     //user has authenticated correctly thus we create a JWT token 
     var token = JSONWebToken.sign({
-      user: {
-        email: user.email,
-        id: user.id
-      }
-    }, 'secret');
+        email: user.email
+    }, settings.privateKey);
+
+    console.log(token, settings.privateKey)
     res.json({ token : token });
     
   })(req, res, next);
 };
 
+
+module.exports.logout = function(req, res, next){
+  
+};
 
 
 module.exports.forgotPassword = function(req, res){
@@ -122,7 +125,7 @@ module.exports.forgotPassword = function(req, res){
                         id: user.id
                     },
                 token = JSONWebToken.sign(tokenData, settings.privateKey);
-          sentMailVerificationLink.sentMailForgotPassword(user,token, req.body.forgotPasswordUrl);
+          mailer.sentMailForgotPassword(user,token, req.body.forgotPasswordUrl);
           res.status(200).json({message : "Instruction to reset password is sent vial email"})
         }else{
           res.status(401).json({message : "User with this email doesn't exists in the system"});

@@ -10,5 +10,22 @@
   },
   "production": {
     "port" : 8080
+  },
+  "social": {
+     "facebook": {
+      "clientID": "APP_ID",
+      "clientSecret": "APP_SECRET",
+      "callbackURL": "http://APP_URL/auth/facebook/callback"
+    },
+    "twitter": {
+      "clientID": "CONSUMER_KEY",
+      "clientSecret": "CONSUMER_SECRET",
+      "callbackURL": "http://APP_URL/auth/twitter/callback"
+    },
+    "google": {
+      "clientID": "APP_ID",
+      "clientSecret": "APP_SECRET",
+      "callbackURL": "http://APP_URL/auth/google/callback"
+    }
   }
 }
