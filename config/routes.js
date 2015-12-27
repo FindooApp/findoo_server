@@ -2,9 +2,12 @@ var express = require('express'),
 	router = express.Router(),
 	controllers = require('../app/controllers'),
 	passport = require('passport'),
-	settings = require('./settings');
+	settings = require('./settings'),
+	validations = require('./middlewares/request-validation');
 
-router.get('/status', function(req, res) {
+console.log("validations",validations.status)
+router.get('/status', validations.status,function(req, res) {
+		
 		res.json({message : 'Server is Up'});
 });
 router.post('/signup', controllers.users.create);
