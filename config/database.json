@@ -1,21 +1,21 @@
 {
   "development": {
-    "username": "",
-    "password": "",
+    "username": "postgres",
+    "password": "root",
     "database": "findoo_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "staging": {
-    "username": "",
-    "password": "",
+    "username": "postgres",
+    "password": "root",
     "database": "findoo_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
   },
   "production": {
-    "username": "",
-    "password": "",
+    "username": "postgres",
+    "password": "root",
     "database": "findoo_db",
     "host": "127.0.0.1",
     "dialect": "postgres"
