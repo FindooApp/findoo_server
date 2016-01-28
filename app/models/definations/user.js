@@ -7,7 +7,9 @@ module.exports = {
       lastname: DataTypes.STRING,
       email: DataTypes.STRING,
       password: DataTypes.STRING,
+      socialId: DataTypes.STRING,
       isVerified : DataTypes.BOOLEAN
+
     };
   },
   associate : function(models){

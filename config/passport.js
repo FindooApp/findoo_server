@@ -59,11 +59,12 @@ passport.use(new TwitterStrategy({
   ))
 
 passport.use(new FacebookStrategy({
-        clientID: config.facebook.clientID
-      , clientSecret: config.facebook.clientSecret
-      , callbackURL: config.facebook.callbackURL
+        clientID: '1682681685349453'
+      , clientSecret: '3946b0b791b493e6667d078ae08cbb86'
+      , callbackURL: 'http://localhost:3000/api/v1//auth/facebook/callback'
     },
     function(accessToken, refreshToken, profile, done) {
+      console.log("accessToken",accessToken, profile)
       User.findOne({ 'facebook.id': profile.id }, function (err, user) {
         if (err) { return done(err) }
         if (!user) {

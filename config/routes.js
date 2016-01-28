@@ -4,9 +4,10 @@ var express = require('express'),
 	passport = require('passport'),
 	settings = require('./settings'),
 	validations = require('./middlewares/request-validation');
+	authenticate = require('./middlewares/authenticate-token');
 
-console.log("validations",validations.status)
-router.get('/status', validations.status,function(req, res) {
+console.log("validations",authenticate)
+router.get('/status',authenticate,function(req, res) {
 		
 		res.json({message : 'Server is Up'});
 });
@@ -18,6 +19,12 @@ router.post('/forgotPassword', controllers.users.forgotPassword);
 router.post('/resetPassword', controllers.users.resetPassword);
 router.post('/resendVerificationEmail', controllers.users.resendVerificationEmail);
 
+router.post('/loginWithFacebook',controllers.users.loginWithFacebook);
+
+router.get('/auth/facebook', passport.authenticate('facebook', { scope : 'email' }));
+router.get('/auth/facebook/callback',
+  passport.authenticate('facebook'),
+  function(req, res){});
 
 router.get('*', function (req, res) {
     res.status(404).json({

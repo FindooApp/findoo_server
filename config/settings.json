@@ -3,7 +3,7 @@
   "privateKey" : "37LvDSm4XvjYOh9Y",
   "algorithm" : "aes-256-ctr",
   "development": {
-    "port" : 3000
+    "port" : 9002
   },
   "staging": {
     "port" : 8000

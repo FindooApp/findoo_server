@@ -28,6 +28,9 @@ module.exports = {
       isVerified : {
         type : DataTypes.BOOLEAN
       },
+      socialId : {
+        type: DataTypes.STRING
+      },
       createdAt: {
         allowNull: false,
         type: DataTypes.DATE

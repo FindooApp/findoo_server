@@ -15,7 +15,7 @@ var express = require('express'),
     //Enable Cors
   app.use(function(req, res, next) {
     res.header("Access-Control-Allow-Origin", "*");
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept,authcode");
     next();
   });
 
@@ -41,40 +41,40 @@ app.use(expressValidator({
   }
 })); 
 
-app.use(function(req, res, next) {
+// app.use(function(req, res, next) {
 
-  // check header or url parameters or post parameters for token
-  var token = req.body.token || req.query.token || req.headers['authcode'];
+//   // check header or url parameters or post parameters for token
+//   var token = req.body.token || req.query.token || req.headers['authcode'];
 
-  // decode token
-  if (token) {
+//   // decode token
+//   if (token) {
 
-      console.log(token,settings.privateKey);
-    // verifies secret and checks exp
-    jwt.verify(token, settings.privateKey, function(err, decoded) {     
+//       console.log(token,settings.privateKey);
+//     // verifies secret and checks exp
+//     jwt.verify(token, settings.privateKey, function(err, decoded) {     
 
 
-    console.log(token,settings.privateKey,decoded); 
-      if (err) {
-        return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });    
-      } else {
-        // if everything is good, save to request for use in other routes
-        req.user = decoded;    
-        next();
-      }
-    });
+//     console.log(token,settings.privateKey,decoded); 
+//       if (err) {
+//         return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });    
+//       } else {
+//         // if everything is good, save to request for use in other routes
+//         req.user = decoded;    
+//         next();
+//       }
+//     });
 
-  } else {
+//   } else {
 
-    // if there is no token
-    // return an error
-    return res.status(403).send({ 
-        success: false, 
-        message: 'No token provided.' 
-    });
+//     // if there is no token
+//     // return an error
+//     return res.status(403).send({ 
+//         success: false, 
+//         message: 'No token provided.' 
+//     });
     
-  }
-});
+//   }
+// });
 
 
 

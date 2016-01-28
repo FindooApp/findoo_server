@@ -3,7 +3,11 @@ var Model = require('../models'),
     passport = require('passport'),
     settings = require('../../config/settings');
     util = require('../helper/util'),
-    mailer  = require('../helper/mailer');
+    mailer  = require('../helper/mailer'),
+    Facebook = require('facebook-node-sdk'),
+    google = require('googleapis'),
+    OAuth2 = google.auth.OAuth2;
+    
 
 
 module.exports.create = function(req, res){
@@ -101,6 +105,7 @@ module.exports.login = function(req, res, next){
 
     //user has authenticated correctly thus we create a JWT token 
     var token = JSONWebToken.sign({
+        id: user.id,
         email: user.email
     }, settings.privateKey);
 
@@ -113,6 +118,31 @@ module.exports.login = function(req, res, next){
 
 module.exports.logout = function(req, res, next){
   
+};
+
+module.exports.loginWithFacebook = function(req, res, next){
+  facebook = new Facebook({ appID: '1682681685349453', secret: '3946b0b791b493e6667d078ae08cbb86' }).setAccessToken(req.body.accessToken);
+facebook.api('/me?&fb_exchange_token=access_token&access_token=' + req.body.accessToken , function(err, data) {
+  console.log(err,data);
+  if(err){
+    res.json({ error : err });
+  }else{
+      Model.User
+        .findOrCreate({ where : {socialId : data.id,isVerified : true}})
+        .spread(function(user, created) {
+          console.log(user.get({
+            plain: true
+        }))
+           var token = JSONWebToken.sign({
+                        id: user.id,
+                        socialId: user.socialId
+                        }, settings.privateKey);
+           res.json({ token : token });
+        })
+    
+  }
+
+});
 };
 
 
