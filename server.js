@@ -10,6 +10,7 @@ var express = require('express'),
     expressValidator = require('express-validator'),
     port = settings[settings.env].port,
     Model = require('./app/models'),
+    mailer  = require('./app/helper/mailer')
     opts = {};
 
     //Enable Cors
@@ -19,11 +20,12 @@ var express = require('express'),
     next();
   });
 
-  app.use(jsonParser);
+
   app.use(logger('dev'));
   app.use(bodyParser.urlencoded({
     extended: true
   }));
+  app.use(jsonParser);
 
 app.use(expressValidator({
   errorFormatter: function(param, msg, value) {
@@ -39,7 +41,7 @@ app.use(expressValidator({
       msg   : msg
     };
   }
-})); 
+}));
 
 // app.use(function(req, res, next) {
 
@@ -51,15 +53,15 @@ app.use(expressValidator({
 
 //       console.log(token,settings.privateKey);
 //     // verifies secret and checks exp
-//     jwt.verify(token, settings.privateKey, function(err, decoded) {     
+//     jwt.verify(token, settings.privateKey, function(err, decoded) {
 
 
-//     console.log(token,settings.privateKey,decoded); 
+//     console.log(token,settings.privateKey,decoded);
 //       if (err) {
-//         return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });    
+//         return res.status(403).json({ success: false, message: 'Failed to authenticate token.' });
 //       } else {
 //         // if everything is good, save to request for use in other routes
-//         req.user = decoded;    
+//         req.user = decoded;
 //         next();
 //       }
 //     });
@@ -68,11 +70,11 @@ app.use(expressValidator({
 
 //     // if there is no token
 //     // return an error
-//     return res.status(403).send({ 
-//         success: false, 
-//         message: 'No token provided.' 
+//     return res.status(403).send({
+//         success: false,
+//         message: 'No token provided.'
 //     });
-    
+
 //   }
 // });
 
@@ -83,9 +85,10 @@ app.use(expressValidator({
 	app.use('/api/v1/', require('./config/routes'));
 	app.set('views', __dirname + '/app/views');
 	app.set('view engine', 'jade');
-
+app.use(errorHandler);
 
 app.use(function (err, req, res, next) {
+  console.log("request reaches")
   if (err.name === 'UnauthorizedError') {
     res.status(401).json({message : 'Unauthorize Access'});
   }
@@ -99,3 +102,9 @@ var server = app.listen(port, function(){
 	var port = server.address().port;
 	console.log('Findoo Server listening at http://%s:%s', host, port);
 });
+
+
+function errorHandler(err, req, res, next) {
+  mailer.sendErrorStackTrace(err,req);
+  res.status(500).json({ error: err.message });
+}

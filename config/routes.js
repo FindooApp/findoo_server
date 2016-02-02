@@ -6,9 +6,10 @@ var express = require('express'),
 	validations = require('./middlewares/request-validation');
 	authenticate = require('./middlewares/authenticate-token');
 
-console.log("validations",authenticate)
-router.get('/status',authenticate,function(req, res) {
-		
+
+// console.log("validations",authenticate)
+router.get('/status',function(req, res) {
+
 		res.json({message : 'Server is Up'});
 });
 router.post('/signup', controllers.users.create);

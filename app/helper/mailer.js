@@ -23,7 +23,7 @@ mailer.extend(app, {
 exports.sentMailVerificationLink = function(user, token, url) {
     console.log("token",token);
      app.mailer.send('../views/mailer/signup', {
-        to: user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field. 
+        to: user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
         subject: "Welcome to Findoo", // REQUIRED.
         user : user,
         verifyEmailUrl : url + '/?' + 'token=' + token // All additional properties are also passed to the template as local variables.
@@ -39,10 +39,27 @@ exports.sentMailVerificationLink = function(user, token, url) {
 exports.sentMailForgotPassword = function(user, token, url) {
     console.log("token",token);
     app.mailer.send('../view/mailer/forgotPassword', {
-        to: user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field. 
+        to: user.email, // REQUIRED. This can be a comma delimited string just like a normal email to field.
         subject: "Welcome to Findoo", // REQUIRED.
         user : user,
         forgotPasswordUrl : url + '/?' + 'token=' + token // All additional properties are also passed to the template as local variables.
+        }, function (err) {
+        if (err) {
+      // handle error
+            console.log(err);
+            return;
+        }
+        });
+};
+
+
+exports.sendErrorStackTrace = function(error,req) {
+
+     app.mailer.send('../views/mailer/error', {
+        to: 'saneilnaik11@gmail.com', // REQUIRED. This can be a comma delimited string just like a normal email to field.
+        subject: "Findoo Error Alert!!", // REQUIRED.
+        error : error,
+        req : req
         }, function (err) {
         if (err) {
       // handle error
