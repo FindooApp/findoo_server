@@ -1,12 +1,12 @@
 {
-  "env" : "development",
+  "env" : "staging",
   "privateKey" : "37LvDSm4XvjYOh9Y",
   "algorithm" : "aes-256-ctr",
   "development": {
     "port" : 9002
   },
   "staging": {
-    "port" : 8000
+    "port" : 80
   },
   "production": {
     "port" : 8080
