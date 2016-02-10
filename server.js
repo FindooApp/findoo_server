@@ -105,6 +105,7 @@ var server = app.listen(port, function(){
 
 
 function errorHandler(err, req, res, next) {
-  mailer.sendErrorStackTrace(err,req);
+  console.log("err",err.stack)
+  // mailer.sendErrorStackTrace(err,req);
   res.status(500).json({ error: err.message });
 }
